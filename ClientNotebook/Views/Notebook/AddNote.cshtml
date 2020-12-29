@@ -1,0 +1,13 @@
+﻿    <h2>Новая заметка</h2>
+
+    <p>На выбранной странице происходит добавление новых заметок</p>
+
+    <form method="POST" asp-action="AddNote">
+        <b>Заметка</b>
+        <textarea rows="6" class="form-control" name="TextNotes"></textarea><br />
+
+        <b>Дата заметки</b><br />
+        <input type="date" name="CurrentTime" value="" /><br /><br />
+
+        <button class="btn btn-outline-success" type="submit">Выполнить</button>
+    </form>

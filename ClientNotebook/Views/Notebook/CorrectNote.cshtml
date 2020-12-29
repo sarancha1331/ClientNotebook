@@ -1,0 +1,16 @@
+﻿    <h2>Редактировать заметку</h2>
+
+    <p>На выбранной странице происходит редактирование заметок</p>
+
+    <form method="POST" asp-action="CorrectNote">
+        <b>Запись</b>
+
+        <input type="text" style="visibility: hidden;" name="NumberCheck" value="@ViewBag.InfoNote.NumberCheck" />
+
+        <textarea rows="6" class="form-control" name="textNotes">@ViewBag.InfoNote.TextNotes</textarea><br />
+
+        <b>Дата заметки</b><br />
+        <input type="date" name="CurrentTime" id="date" value=@ViewBag.InfoNote.CurrentTime.ToString("yyyy-MM-dd") /><br /><br />
+
+        <button class="btn btn-outline-success" type="submit">Выполнить</button>
+    </form>

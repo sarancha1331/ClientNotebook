@@ -1,0 +1,52 @@
+﻿    <h4>Список заметок</h4>
+
+    <p>На странице представлены следующие функции: добавление, удаление, редактирование, просмотр, выборка(статус) всех заметок.</p>
+
+    <a class="btn btn-outline-success" href="/Notebook/AddNote" role="button">Добавить заметку</a>
+
+    <div style="float:right;">
+        <form method="GET" asp-action="SortByStatusNote">
+            <span style="margin-left: 30px; font-size: 14px;">Статус: </span>
+            <select name="StatusFilter" style="height: 32px;">
+                @if (ViewBag.ChoiceStatus == "All") {<option selected value="1">Все</option>} else {<option value="1">Все</option>}
+                @if (ViewBag.ChoiceStatus == "Expired") {<option selected value="2">Просроченные</option>} else {<option value="2">Просроченные</option>}
+                @if (ViewBag.ChoiceStatus == "Active") {<option selected value="3">Активные</option>} else {<option value="3">Активные</option>}
+            </select>
+            <button style="font-size: 14px; margin-top: -6px;" class="btn btn-warning" type="submit">Фильтровать</button>
+        </form>
+    </div>
+
+    <br />
+
+    <table style="margin-top: 5px;" class="table" id="table" name="table">
+        <thead>
+            <tr>
+                <th scope="col">Дата задачи</th>
+                <th scope="col">Заметка</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Управление</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var res in ViewBag.ListNotes)
+            {
+            <tr>
+                <td>@res.CurrentTime.ToLongDateString()</td>
+                <td>@res.TextNotes</td>
+                @if (res.StatusCheck)
+                {
+                    <td style="color: green;">Активный</td>
+                }
+                else
+                {
+                    <td style="color: orange;">Просроченный</td>
+                }
+                <td>
+                    <a style="color: red;" href="/Notebook/DelNote/@res.NumberCheck">Удалить</a><br />
+                    <a style="color: #169db2;" href="/Notebook/CorrectNote/@res.NumberCheck">Редактировать</a>
+                </td>
+            </tr>
+
+            }
+        </tbody>
+    </table>
