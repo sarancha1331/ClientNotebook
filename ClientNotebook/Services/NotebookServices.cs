@@ -16,18 +16,16 @@ namespace ClientNotebook.Services
     /// </summary>
     public class NotebookServices : INotebookServices
     {
-        /// <summary>
-        /// Репозиторий Notebook
-        /// </summary>
-        private readonly INotebookRepository notebookRepository;
+
+        private readonly IGenericRepository<Note> genericRepository;
 
         /// <summary>
         /// Инициализация репозитория
         /// </summary>
         /// <param name="notebookRepository"></param>
-        public NotebookServices(INotebookRepository notebookRepository)
+        public NotebookServices(IGenericRepository<Note> genericRepository)
         {
-            this.notebookRepository = notebookRepository;
+            this.genericRepository = genericRepository;
         }
 
         /// <summary>
@@ -35,10 +33,25 @@ namespace ClientNotebook.Services
         /// </summary>
         /// <param name="statusFilterNote">Фильтр</param>
         /// <returns></returns>
-        public List<NoteModel> GetNotes(StatusFilterNote? statusFilterNote)
+        public List<NoteModel> GetNotes(StatusFilterNote? statusFilterNote)     //Queryable read
         {
-            var note = notebookRepository.GetNotes(statusFilterNote);       //Получаем список записей с репозитория          
-            return note.Select(p => p.ToNoteModel()).ToList();              //Формируем List NoteModel из List Note с помощью мапинга
+            var query = genericRepository.AsQueryable();
+            query = query.OrderByDescending(l => l.Datatime);
+            if (statusFilterNote != null)
+            {
+                switch (statusFilterNote.Value)
+                {
+                    case StatusFilterNote.Expired:
+                        query = query.Where(l => l.Datatime < DateTime.Now);   //Фильтр просроченых записей
+                        break;
+                    case StatusFilterNote.Active:
+                        query = query.Where(l => l.Datatime >= DateTime.Now);   //Фильтр активных записей
+                        break;
+                    default:
+                        break;
+                }
+            }        
+            return query.ToList().Select(p => p.ToNoteModel()).ToList();              //Формируем List NoteModel из List Note с помощью мапинга
         }
 
         /// <summary>
@@ -48,7 +61,7 @@ namespace ClientNotebook.Services
         /// <returns></returns>
         public NoteModel GetNoteById(int? id)
         {
-            var note = notebookRepository.GetNoteById(id);                  //Находим нужную запись
+            var note = genericRepository.GetById(id);                  //Находим нужную запись
             if (note != null)
             {
                 return note.ToNoteModel();                                  //Формируем NoteModel из Note с помощью мапинга
@@ -65,7 +78,7 @@ namespace ClientNotebook.Services
         /// <param name="id">Ключевое поле</param>
         public void DelNote(int? id)
         {
-            notebookRepository.DelNote(id);
+            genericRepository.Delete(id);
         }
 
         /// <summary>
@@ -78,7 +91,7 @@ namespace ClientNotebook.Services
             {
                 return;                                                     //Заглушка
             }
-            notebookRepository.AddNote(noteOption.ToNote());                //Прокидываем в репозиторий Note с помощью мапинга
+            genericRepository.Add(noteOption.ToNote());                //Прокидываем в репозиторий Note с помощью мапинга
         }
 
         /// <summary>
@@ -91,12 +104,12 @@ namespace ClientNotebook.Services
             {
                 return;                                                     //Заглушка
             }
-            Note note = notebookRepository.GetNoteById(noteOption.NumberCheck);     //Находим нужную запись
+            Note note = genericRepository.GetById(noteOption.NumberCheck);     //Находим нужную запись
             
             note.Check = noteOption.TextNotes;                              //Редактируем
             note.Datatime = noteOption.CurrentTime;
 
-            notebookRepository.UpdateNote(note);                            //Обновляем в БД
+            genericRepository.SaveChanges();                       //Обновляем в БД
         }
 
 

@@ -9,19 +9,13 @@ namespace ClientNotebook.Entities
     /// <summary>
     /// Сущность таблицы всех заметок
     /// </summary>
-    public class Note : BaseEntity     
+    public class BaseEntity      
     {
-        
         /// <summary>
-        ///Строка записи редактируемая пользователем 
+        /// Ключевое поле
         /// </summary>
-        [Required]
-        public string Check { get; set; }
-
-        /// <summary>
-        /// Дата
-        /// </summary>
-        [Required]
-        public DateTime Datatime { get; set; }
+        [Key]
+        public int Id { get; set; }     
+       
     }
 }

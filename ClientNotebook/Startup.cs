@@ -1,4 +1,5 @@
 using ClientNotebook.App_Data;
+using ClientNotebook.Entities;
 using ClientNotebook.Interface;
 using ClientNotebook.Repository;
 using ClientNotebook.Services;
@@ -32,7 +33,8 @@ namespace ClientNotebook
             Configuration.GetConnectionString("DefaultConnection")));       //Строка соединения находится в .json
 
             services.AddTransient<INotebookServices, NotebookServices>();   //Связываем интерфейсы и репозитории через DI
-            services.AddTransient<INotebookRepository, NoteRepository>();
+
+            services.AddTransient<IGenericRepository<Note>, GenericRepository<Note>>(); //!!!
 
             services.AddControllersWithViews();
         }
