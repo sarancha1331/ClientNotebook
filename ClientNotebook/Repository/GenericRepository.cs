@@ -3,6 +3,7 @@ using ClientNotebook.Entities;
 using ClientNotebook.Enum;
 using ClientNotebook.Interface;
 using ClientNotebook.Services.Option;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,65 +24,63 @@ namespace ClientNotebook.Repository     //ИЗМЕНИТЬ КОМЕНТЫ
         /// <summary>
         /// Инициализация контекста 
         /// </summary>
-        /// <param name="dbNotebookContext"></param>
         public GenericRepository(DbNotebookContext dbNotebookContext)
         {
-            this.context = dbNotebookContext;
+            context = dbNotebookContext;
         }
 
         /// <summary>
         /// Получение выбранной записи по ключевому полю
         /// </summary>
-        /// <param name="id">Ключевое поле</param>
-        /// <returns></returns>
-        public T GetById(int? id)
+        public async Task<T> GetByIdAsync(int? id)
         {
-            //return dbNotebookContext.T.Find(id);
-            return context.Set<T>().Find(id);
+            return await context.Set<T>().FindAsync(id);
         }
 
         /// <summary>
-        /// Выборка всех записей(нижний уровень)
+        /// Выборка всех записей
         /// </summary>
-        /// <returns></returns>
-        public List<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
-            return context.Set<T>().ToList();
+            return await context.Set<T>().ToListAsync();
         }
 
-        public IQueryable<T> AsQueryable()
+        /// <summary>
+        /// Получение сущности через AsQueryable
+        /// </summary>
+        public IQueryable<T> AsQueryable()  //?
         {
             return context.Set<T>().AsQueryable();
         }
 
-
         /// <summary>
         /// Запрос на удаление выбранной записи по ID
         /// </summary>
-        /// <param name="id">Ключевое поле</param>
-        public void Delete(int? id)
+        public async Task DeleteAsync(int? id)
         {
-            var entity = GetById(id);
+            T entity = await GetByIdAsync(id);
             if (entity != null)
             {
                 context.Set<T>().Remove(entity);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
         /// <summary>
         /// Запрос на добавление новой записи
         /// </summary>
-        /// <param name="note"></param>
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
-            context.Add(entity);
-            context.SaveChanges();
+            await context.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
 
-        public void SaveChanges()
+        /// <summary>
+        /// Обновление БД
+        /// </summary>
+        public async Task SaveChangesAsync()
         {
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
 

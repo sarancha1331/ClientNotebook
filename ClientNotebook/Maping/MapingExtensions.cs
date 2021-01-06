@@ -13,8 +13,6 @@ namespace ClientNotebook.Maping
         /// <summary>
         /// Мапинг convert Note -> NoteModel
         /// </summary>
-        /// <param name="item">Входящий параметр Note</param>
-        /// <returns>Возвращает сформированный NoteModel</returns>
         public static NoteModel ToNoteModel(this Note item)
         {
             bool status;
@@ -33,8 +31,6 @@ namespace ClientNotebook.Maping
         /// <summary>
         /// Мапинг convert AddNoteOption -> Note
         /// </summary>
-        /// <param name="item">Входящий параметр AddNoteOption</param>
-        /// <returns>Возвращает сформированный Note</returns>
         public static Note ToNote(this AddNoteOption item)
         {
             Note note;

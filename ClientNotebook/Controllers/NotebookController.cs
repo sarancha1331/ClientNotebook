@@ -22,7 +22,6 @@ namespace ClientNotebook.Controllers
         /// <summary>
         /// Конструктор с доступом к интерфейсу сервиса
         /// </summary>
-        /// <param name="notebookServices"></param>
         public NotebookController(INotebookServices notebookServices) {
             this.notebookServices = notebookServices;
         }
@@ -30,40 +29,34 @@ namespace ClientNotebook.Controllers
         /// <summary>
         /// Отображение всех записей на странице
         /// </summary>
-        /// <returns></returns>
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewBag.ListNotes = notebookServices.GetNotes(StatusFilterNote.All);
+            ViewBag.ListNotes = await notebookServices.GetNotesAsync(StatusFilterNote.All);
             return View();
         }
 
         /// <summary>
         /// Выборка записей через фильтр
         /// </summary>
-        /// <param name="StatusFilter">фильтр</param>
-        /// <returns></returns>
         [HttpGet]
-        public IActionResult SortByStatusNote(StatusFilterNote statusFilter)
+        public async Task<IActionResult> SortByStatusNote(StatusFilterNote statusFilter)
         {
             ViewBag.ChoiceStatus = statusFilter.ToString();                     //<option> после фильтрации записей
-            ViewBag.ListNotes = notebookServices.GetNotes(statusFilter);
+            ViewBag.ListNotes = await notebookServices.GetNotesAsync(statusFilter);
             return View("Index");
         }
 
         /// <summary>
         /// Удаление записи по ID
         /// </summary>
-        /// <param name="id">Ключевое поле каждой записи</param>
-        /// <returns></returns>
-        public IActionResult DelNote(int? id) {
-            notebookServices.DelNote(id);
+        public async Task<IActionResult> DelNote(int? id) {
+            await notebookServices.DelNoteAsync(id);
             return RedirectToAction("Index");
         }
 
         /// <summary>
         /// Форма добавления новой записи
         /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public IActionResult AddNote()
         {
@@ -74,23 +67,20 @@ namespace ClientNotebook.Controllers
         /// Запрос на добавление новой записи
         /// </summary>
         /// <param name="noteOption">Параметр, необходимый для первичной обработки данных в сервисе(NotebookServices)</param>
-        /// <returns></returns>
         [HttpPost]
-        public IActionResult AddNote(AddNoteOption noteOption)
+        public async Task<IActionResult> AddNote(AddNoteOption noteOption)
         {
-            notebookServices.AddNote(noteOption);
+            await notebookServices.AddNoteAsync(noteOption);
             return RedirectToAction("Index");
         }
 
         /// <summary>
         /// Поиск выбранной записи и отображение выбранной информации для дальнейшего редактирования
         /// </summary>
-        /// <param name="id">Ключевое поле записи</param>
-        /// <returns></returns>
         [HttpGet]
-        public IActionResult CorrectNote(int? id)
+        public async Task<IActionResult> CorrectNote(int? id)
         {
-            NoteModel note = notebookServices.GetNoteById(id);
+            NoteModel note = await notebookServices.GetNoteByIdAsync(id);
             if (note != null)
             {
                 ViewBag.InfoNote = note;
@@ -99,18 +89,16 @@ namespace ClientNotebook.Controllers
             else {
                 return RedirectToAction("Index");                       //Заглушка
             }
-
         }
 
         /// <summary>
         /// Отправка запроса на редактирование данных
         /// </summary>
         /// <param name="noteOption">Параметр, необходимый для первичной обработки данных в сервисе(NotebookServices)</param>
-        /// <returns></returns>
         [HttpPost]
-        public IActionResult CorrectNote(AddNoteOption noteOption)
+        public async Task<IActionResult> CorrectNote(AddNoteOption noteOption)
         {
-            notebookServices.CorrectNote(noteOption);
+            await notebookServices.CorrectNoteAsync(noteOption);
             return RedirectToAction("Index");
         }
     }

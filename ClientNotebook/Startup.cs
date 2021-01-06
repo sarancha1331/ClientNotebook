@@ -34,7 +34,7 @@ namespace ClientNotebook
 
             services.AddTransient<INotebookServices, NotebookServices>();   //Связываем интерфейсы и репозитории через DI
 
-            services.AddTransient<IGenericRepository<Note>, GenericRepository<Note>>(); //!!!
+            services.AddTransient<IGenericRepository<Note>, GenericRepository<Note>>();
 
             services.AddControllersWithViews();
         }

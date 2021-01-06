@@ -10,8 +10,7 @@ namespace ClientNotebook.Entities
     /// Сущность таблицы всех заметок
     /// </summary>
     public class Note : BaseEntity     
-    {
-        
+    {       
         /// <summary>
         ///Строка записи редактируемая пользователем 
         /// </summary>

@@ -17,33 +17,29 @@ namespace ClientNotebook.Interface
         /// <summary>
         /// Возвращает список всех записей
         /// </summary>
-        /// <param name="statusFilterNote">Фильтр</param>
-        /// <returns></returns>
-        List<NoteModel> GetNotes(StatusFilterNote? statusFilterNote);
+        Task<List<NoteModel>> GetNotesAsync(StatusFilterNote? statusFilterNote);
 
         /// <summary>
         /// Запрос на удаление записи по ID
         /// </summary>
-        /// <param name="id">Ключевое поле</param>
-        void DelNote(int? id);
+        Task DelNoteAsync(int? id);
 
         /// <summary>
         /// Добавление новой записи
         /// </summary>
         /// <param name="noteOption">Необработанный параметр полученный напрямую от клиента</param>
-        void AddNote(AddNoteOption noteOption);
+        Task AddNoteAsync(AddNoteOption noteOption);
 
         /// <summary>
         /// Получение записи по ID
         /// </summary>
-        /// <param name="id">Ключевое поле</param>
         /// <returns>Возвращает копию нашей сущности Note реализованную через модель NoteModel</returns>
-        NoteModel GetNoteById(int? id);
+        Task<NoteModel> GetNoteByIdAsync(int? id);
 
         /// <summary>
         /// Редактирование выбранной записи
         /// </summary>
         /// <param name="noteOption"> Список параметров для редактирования записи</param>
-        void CorrectNote(AddNoteOption noteOption);
+        Task CorrectNoteAsync(AddNoteOption noteOption);
     }
 }

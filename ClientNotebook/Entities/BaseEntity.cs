@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ClientNotebook.Entities
 {
     /// <summary>
-    /// Сущность таблицы всех заметок
+    /// Родительская сущность с шаблонными запросами к бд
     /// </summary>
     public class BaseEntity      
     {

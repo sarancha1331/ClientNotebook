@@ -4,6 +4,7 @@ using ClientNotebook.Interface;
 using ClientNotebook.Maping;
 using ClientNotebook.Services.Models;
 using ClientNotebook.Services.Option;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,6 @@ namespace ClientNotebook.Services
         /// <summary>
         /// Инициализация репозитория
         /// </summary>
-        /// <param name="notebookRepository"></param>
         public NotebookServices(IGenericRepository<Note> genericRepository)
         {
             this.genericRepository = genericRepository;
@@ -31,9 +31,7 @@ namespace ClientNotebook.Services
         /// <summary>
         /// Возвращает список всех заметок
         /// </summary>
-        /// <param name="statusFilterNote">Фильтр</param>
-        /// <returns></returns>
-        public List<NoteModel> GetNotes(StatusFilterNote? statusFilterNote)     //Queryable read
+        public async Task<List<NoteModel>> GetNotesAsync(StatusFilterNote? statusFilterNote)     //Queryable read
         {
             var query = genericRepository.AsQueryable();
             query = query.OrderByDescending(l => l.Datatime);
@@ -50,66 +48,59 @@ namespace ClientNotebook.Services
                     default:
                         break;
                 }
-            }        
-            return query.ToList().Select(p => p.ToNoteModel()).ToList();              //Формируем List NoteModel из List Note с помощью мапинга
+            }
+            return (await query.ToListAsync()).Select(p => p.ToNoteModel()).ToList();
         }
 
         /// <summary>
         /// Получение запись по ID
         /// </summary>
-        /// <param name="id">Ключевое поле</param>
-        /// <returns></returns>
-        public NoteModel GetNoteById(int? id)
+        public async Task<NoteModel> GetNoteByIdAsync(int? id)
         {
-            var note = genericRepository.GetById(id);                  //Находим нужную запись
+            Note note = await genericRepository.GetByIdAsync(id);                  //Находим нужную запись
             if (note != null)
             {
                 return note.ToNoteModel();                                  //Формируем NoteModel из Note с помощью мапинга
             }
             else {
                 return null;                                                //Заглушка
-            }
-                                               
+            }                             
         }
 
         /// <summary>
         /// Запрос на удаление выбранной записи
         /// </summary>
-        /// <param name="id">Ключевое поле</param>
-        public void DelNote(int? id)
+        public async Task DelNoteAsync(int? id)
         {
-            genericRepository.Delete(id);
+            await genericRepository.DeleteAsync(id);
         }
 
         /// <summary>
         /// Запрос на добавление новой записи
         /// </summary>
-        /// <param name="noteOption">Параметр принятый от клиента</param>
-        public void AddNote(AddNoteOption noteOption)
+        public async Task AddNoteAsync(AddNoteOption noteOption)
         {
             if (noteOption.CurrentTime.ToString() == "01.01.0001 0:00:00" || noteOption.TextNotes == null)
             {
                 return;                                                     //Заглушка
             }
-            genericRepository.Add(noteOption.ToNote());                //Прокидываем в репозиторий Note с помощью мапинга
+            await genericRepository.AddAsync(noteOption.ToNote());                //Прокидываем в репозиторий Note с помощью мапинга
         }
 
         /// <summary>
         /// Запрос на редактирование выбранной записи
         /// </summary>
-        /// <param name="noteOption">Параметр принятный от клиента</param>
-        public void CorrectNote(AddNoteOption noteOption)
+        public async Task CorrectNoteAsync(AddNoteOption noteOption)
         {
             if (noteOption.CurrentTime.ToString() == "01.01.0001 0:00:00" || noteOption.TextNotes == null)
             {
                 return;                                                     //Заглушка
             }
-            Note note = genericRepository.GetById(noteOption.NumberCheck);     //Находим нужную запись
-            
+            Note note = await genericRepository.GetByIdAsync(noteOption.NumberCheck);     //Находим нужную запись
             note.Check = noteOption.TextNotes;                              //Редактируем
             note.Datatime = noteOption.CurrentTime;
 
-            genericRepository.SaveChanges();                       //Обновляем в БД
+            await genericRepository.SaveChangesAsync();                       //Обновляем в БД
         }
 
 
